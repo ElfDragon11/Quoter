@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Change parent to Material 3 NoActionBar -->
+    <style name="Theme.Quoter" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- You can add other theme customizations here if needed -->
+    </style>
+
+    <!-- Splash Screen Theme -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background -->
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <!-- Set the splash screen icon -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+        <!-- Set the theme to transition to after the splash screen -->
+        <item name="postSplashScreenTheme">@style/Theme.Quoter</item>
+    </style>
+</resources>
