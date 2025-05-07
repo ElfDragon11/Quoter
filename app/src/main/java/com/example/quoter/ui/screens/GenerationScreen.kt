@@ -14,13 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip // Import for clipping shape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.quoter.QuoteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GenerationScreen(
-    navController: NavController, // Keep NavController if needed for future navigation
     viewModel: QuoteViewModel
 ) {
     val customizationState by viewModel.customizationState.collectAsState()

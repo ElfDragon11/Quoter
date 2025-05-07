@@ -4,28 +4,33 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi // For Pager
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.GridView // Use GridView for Library
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope // Add this import
+import androidx.compose.runtime.setValue // For mutable state
+import androidx.compose.runtime.mutableStateOf // Add this import
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.* // Import compose navigation artifacts
+import androidx.compose.ui.unit.dp // Import dp unit
 import com.example.quoter.ui.screens.GenerationScreen
 import com.example.quoter.ui.screens.ImageLibraryScreen
 import com.example.quoter.ui.screens.SettingsScreen // Import SettingsScreen
 import com.example.quoter.ui.theme.QuoterTheme
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import kotlinx.coroutines.flow.collectLatest
-import androidx.compose.ui.unit.dp // Import dp unit
-import androidx.compose.foundation.layout.height // Add this import
+import kotlinx.coroutines.launch
 
 // Define Navigation Routes
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
@@ -55,12 +60,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class) // Add OptIn for TopAppBar
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class) // Add OptIn for TopAppBar
 @Composable
 fun QuoterApp(viewModel: QuoteViewModel) {
-    val navController = rememberNavController()
-    // Create SnackbarHostState
+    // val navController = rememberNavController() // NavController might not be needed for top-level anymore
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Pager state for swipe navigation
+    // Explicitly name the pageCount parameter
+    val pagerState = rememberPagerState(pageCount = { items.size })
+    val coroutineScope = rememberCoroutineScope()
+
+    // State to control pager swipeability based on ImageLibrary's fullscreen mode
+    var isImageLibraryFullscreen by remember { mutableStateOf(false) }
 
     // Listen for Snackbar messages from ViewModel
     LaunchedEffect(Unit) { // Launch once per composition
@@ -78,25 +90,15 @@ fun QuoterApp(viewModel: QuoteViewModel) {
                 // Add modifier to set the height
                 modifier = Modifier.height(60.dp) // Try a smaller height
             ) {
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-                items.forEach { screen -> // This loop now only includes Generation and Library
+                items.forEachIndexed { index, screen -> // Use forEachIndexed for page index
                     NavigationBarItem(
                         icon = { Icon(screen.icon, contentDescription = screen.label) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                        // Selected state now based on pagerState.currentPage
+                        selected = pagerState.currentPage == index,
                         onClick = {
-                            navController.navigate(screen.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                // Avoid multiple copies of the same destination when
-                                // reselecting the same item
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                                restoreState = true
+                            // Animate to the selected page
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(index)
                             }
                         }
                     )
@@ -104,11 +106,27 @@ fun QuoterApp(viewModel: QuoteViewModel) {
             }
         }
     ) { innerPadding ->
-        NavHost(navController, startDestination = Screen.Generation.route, Modifier.padding(innerPadding)) {
-            composable(Screen.Generation.route) { GenerationScreen(navController, viewModel) }
-            composable(Screen.Library.route) { ImageLibraryScreen(navController, viewModel) }
-            // Remove SettingsScreen route
-            // composable(Screen.Settings.route) { SettingsScreen() }
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize() // Pager should fill the content area
+                .padding(innerPadding),
+            userScrollEnabled = !isImageLibraryFullscreen // Disable swipe if image library is fullscreen
+        ) { pageIndex ->
+            // Content for each page
+            when (pageIndex) {
+                0 -> GenerationScreen(
+                    // navController, // Pass NavController if GenerationScreen has internal navigation
+                    viewModel = viewModel
+                )
+                1 -> ImageLibraryScreen(
+                    // navController, // Pass NavController if ImageLibraryScreen has internal navigation
+                    viewModel = viewModel,
+                    onFullscreenToggle = { isFullscreen ->
+                        isImageLibraryFullscreen = isFullscreen
+                    }
+                )
+            }
         }
     }
 }

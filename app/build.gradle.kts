@@ -5,8 +5,9 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("plugin.compose")
-    kotlin("kapt")
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0" // Add serialization plugin
+    kotlin("kapt") // Re-add Kapt plugin
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.0.0"
+    // id("com.google.devtools.ksp") version "2.0.0-1.0.21" // Remove KSP plugin
 }
 
 // Function to load properties from local.properties
@@ -78,7 +79,7 @@ dependencies {
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1") // Change back to Kapt compiler
 
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")

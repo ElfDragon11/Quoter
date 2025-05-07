@@ -58,23 +58,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.quoter.QuoteViewModel
 import com.example.quoter.data.GeneratedImage
 import java.io.File
 import android.content.Intent
 import android.app.WallpaperManager
 import android.content.ComponentName
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.quoter.QuoteWallpaperService
 import com.example.quoter.ui.theme.PrimaryBlue // Import the color
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class) // Add ExperimentalFoundationApi
 @Composable
 fun ImageLibraryScreen(
-    navController: NavController,
-    viewModel: QuoteViewModel
+    viewModel: QuoteViewModel,
+    onFullscreenToggle: (Boolean) -> Unit // New callback
 ) {
     val generatedImages by viewModel.generatedImages.collectAsState()
     val context = LocalContext.current
@@ -89,6 +88,11 @@ fun ImageLibraryScreen(
     }
 
     var fullscreenImageIndex by remember { mutableStateOf<Int?>(null) }
+
+    // Effect to call the toggle when fullscreenImageIndex changes
+    LaunchedEffect(fullscreenImageIndex) {
+        onFullscreenToggle(fullscreenImageIndex != null)
+    }
 
     // Use Box to allow overlaying the FAB
     Box(modifier = Modifier.fillMaxSize()) {
@@ -302,10 +306,8 @@ fun FullscreenImageViewer(
                         },
                         onDragEnd = {
                             if (offsetY > dismissThreshold) {
-                                onDismiss() // Dismiss if swiped down enough
+                                onDismiss()
                             } else {
-                                // Animate back to original position if not dismissed (optional)
-                                // For simplicity, just reset offset here
                                 offsetY = 0f
                             }
                         }
@@ -325,7 +327,7 @@ fun FullscreenImageViewer(
                     contentDescription = "Fullscreen image: ${image.prompt ?: ""}",
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp), // Add some padding around the image
+                        .padding(16.dp),
                     contentScale = ContentScale.Fit // Fit the image within the bounds
                 )
             }

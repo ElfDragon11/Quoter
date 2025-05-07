@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Quoter</string>
+    <string name="app_name">Quotewall</string>
 
     <!-- Live Wallpaper Strings -->
-    <string name="wallpaper_label">Quoter Live Wallpaper</string>
+    <string name="wallpaper_label">Quotewall Live Wallpaper</string>
     <string name="wallpaper_description">Displays generated quote wallpapers and rotates them.</string>
 </resources>

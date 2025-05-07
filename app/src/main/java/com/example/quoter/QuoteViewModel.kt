@@ -277,7 +277,7 @@ class QuoteViewModel(application: Application) : AndroidViewModel(application) {
             put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(MediaStore.Images.Media.IS_PENDING, 1)
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Quoter") // Save in Pictures/Quoter folder
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/Quotewall") // Change to Quotewall
             }
         }
 

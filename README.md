@@ -1,56 +1,37 @@
-# Quoter v2 - AI-Powered Wallpaper Generator
+# Quotewall - AI-Powered Wallpaper Generator
 
-This document outlines the goals and development plan for enhancing the Quoter Android application. The primary goal is to integrate AI-powered image generation for dynamic wallpapers and provide users with greater customization options.
+Quotewall is an Android application that empowers you to create unique and personalized phone wallpapers. Leveraging AI, Quotewall generates stunning background images based on your preferences and overlays them with your favorite quotes.
 
-## Project Goals
+## Key Features:
 
-1.  **AI Background Generation**: Integrate with the OpenAI API (specifically, an image generation model like DALL-E) to create unique background images based on user prompts or selections.
-2.  **Image Cropping**: Automatically crop the generated 1024x1536 images to a 9:16 aspect ratio suitable for phone wallpapers, focusing on the central portion.
-3.  **Enhanced Customization**: Introduce new settings for wallpaper generation:
-    *   Location (e.g., City, Nature)
-    *   Scene (e.g., Abstract, Landscape)
-    *   Style (e.g., Photorealistic, Cartoon, Painting)
-    *   Font (for the quote text)
-4.  **Image Library**: Implement a gallery or library where users can view, select, and deselect the AI-generated images they want to include in the automatic wallpaper rotation.
-5.  **Local Image Storage**: Save generated images to the device's local storage for offline access and use in the image library.
-6.  **Refined User Experience**: Ensure the new features are seamlessly integrated into the existing app structure and UI (built with Jetpack Compose).
+*   **AI Background Generation**:
+    *   Specify a **Location** (e.g., Mountains, Forest, Ocean, Space, City), **Scene** (e.g., Natural, Sunset, Futuristic, Modern), and **Style** (e.g., Photorealistic, Oil Painting, Cartoon) to guide the AI in creating a background image.
+    *   Provide a **Quote** to be featured on the wallpaper.
+    *   Choose a **Font Style** (e.g., Bold, Artistic, Cursive) and adjust the **Font Size** for the quote text.
+    *   The app supports custom text input for all generation parameters if the predefined options don't meet your needs.
+*   **Image Library**:
+    *   All generated images are saved to a local library within the app.
+    *   Browse your collection of generated wallpapers.
+    *   **Select/Deselect** images for various actions.
+    *   **Delete** unwanted images from your library.
+    *   **Export** selected images to your device's public gallery (Pictures/Quotewall folder).
+    *   View images in a **fullscreen viewer** with swipe navigation.
+*   **Live Wallpaper Service**:
+    *   Set your selected images from the library as a **Live Wallpaper**. The app will automatically rotate through these images on your phone's background.
+*   **User-Friendly Interface**:
+    *   Clean and intuitive design built with Jetpack Compose and Material 3.
+    *   Separate screens for wallpaper generation and managing your image library.
+    *   Dynamic theme that adapts to system light/dark mode.
 
-## Development Outline
+## How It Works:
 
-1.  **Setup OpenAI Integration**:
-    *   Add necessary dependencies (e.g., Retrofit/Ktor for API calls, JSON parsing library).
-    *   Securely manage the OpenAI API key (avoid hardcoding).
-    *   Implement API service calls to the image generation endpoint.
-2.  **Image Generation & Cropping**:
-    *   Develop logic to construct prompts for the AI based on user customizations (Location, Scene, Style).
-    *   Handle the API response containing the image URL or data.
-    *   Download the generated image.
-    *   Implement image cropping logic (calculate center 9:16 portion of 1024x1536).
-3.  **Local Storage**:
-    *   Choose a storage strategy (Internal vs. External storage).
-    *   Implement functions to save cropped images locally, potentially naming them uniquely.
-    *   Consider storage management (e.g., capping the number of saved images or total size).
-4.  **Database/State Management**:
-    *   Update the Room database or app state management to store references (e.g., file paths) to the saved images.
-    *   Associate saved images with user selections (which ones are active for rotation).
-5.  **UI Development**:
-    *   **Customization**: Add dropdowns/selectors for Location, Scene, Style, and Font to the Settings or a dedicated customization screen.
-    *   **Image Library**: Create a new screen or section displaying thumbnails of saved images. Allow users to select/deselect images for rotation. Add delete functionality.
-    *   **Preview**: Update the `PreviewScreen` to reflect the new customization options and potentially show previews with generated images.
-6.  **Wallpaper Service Update**:
-    *   Modify the `QuoteWallpaperWorker` (or relevant service) to:
-        *   Fetch user customization preferences.
-        *   Select an image from the user's active library (either randomly or sequentially).
-        *   Load the selected local image file.
-        *   Combine the loaded image with the selected quote and font.
-        *   Set the combined image as the wallpaper.
-7.  **Refactoring & Integration**:
-    *   Update ViewModels and Repositories to handle new data and logic.
-    *   Ensure smooth navigation between existing and new screens.
-8.  **Permissions**:
-    *   Verify necessary permissions (Internet for API calls, potentially Storage permissions depending on the chosen strategy).
-9.  **Testing**:
-    *   Unit tests for API calls, cropping logic, database operations.
-    *   UI tests for new screens and interactions.
-    *   Manual testing of the end-to-end flow (customization -> generation -> saving -> library management -> wallpaper setting).
+1.  **Generate**: Navigate to the "Generate" screen. Enter your desired quote, and customize the background by selecting or typing in your preferred location, scene, style, font style, and font size. Tap "Generate Image."
+2.  **Library**: Go to the "Library" screen to view all your generated images.
+    *   Long-press an image to enter selection mode.
+    *   In selection mode, tap images to add or remove them from the current selection.
+    *   Use the top-left **Export** button (download icon) to save selected images to your device gallery.
+    *   Use the top-right **Delete** button (trash icon) to remove selected images from the app's library.
+3.  **Set Live Wallpaper**: From the Library screen, select the images you want to include in your live wallpaper rotation. Tap the "Set Live Wallpaper" button at the bottom to activate the service.
+
+Enjoy your personalized AI-generated wallpapers with Quotewall!
 

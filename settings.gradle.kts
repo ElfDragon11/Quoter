@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Quoter"
+rootProject.name = "Quotewall"
 include(":app")
