@@ -2,6 +2,7 @@ package com.example.quoter.network
 
 import com.example.quoter.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.ai.client.generativeai.type.Blob // Re-add this import
 import com.google.ai.client.generativeai.type.BlobPart
 import com.google.ai.client.generativeai.type.content
 import kotlinx.coroutines.Dispatchers
@@ -41,8 +42,17 @@ class ImagenServiceImpl : ImagenService {
 
             if (generatedContent != null && generatedContent.parts.isNotEmpty()) {
                 val imagePart = generatedContent.parts.firstOrNull()
-                if (imagePart is BlobPart) {
-                    val imageData = imagePart.blob.data.array()
+                // Use fully qualified name for BlobPart in the 'is' check for extreme explicitness
+                if (imagePart is com.google.ai.client.generativeai.type.BlobPart) {
+                    // Explicitly cast to the fully qualified BlobPart
+                    val explicitBlobPart = imagePart as com.google.ai.client.generativeai.type.BlobPart
+                    
+                    // Explicitly type the blob property using the imported Blob
+                    val actualBlob: com.google.ai.client.generativeai.type.Blob = explicitBlobPart.blob
+                    
+                    // Now call asBytes() on the explicitly typed actualBlob
+                    val imageData = actualBlob.asBytes()
+
                     if (imageData.isNotEmpty()) {
                         Result.success(imageData)
                     } else {
@@ -73,3 +83,5 @@ class ImagenServiceImpl : ImagenService {
         }
     }
 }
+
+
