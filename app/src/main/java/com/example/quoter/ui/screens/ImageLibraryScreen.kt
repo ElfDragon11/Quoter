@@ -161,7 +161,6 @@ fun ImageLibraryScreen(
                             val image = generatedImages[index]
                             ImageLibraryItem(
                                 image = image,
-                                viewModel = viewModel,
                                 isInSelectionMode = isInSelectionMode,
                                 onToggleSelection = {
                                     viewModel.toggleImageSelection(image)
@@ -169,7 +168,17 @@ fun ImageLibraryScreen(
                                 onStartSelectionMode = {
                                     if (!isInSelectionMode) { // Only start selection mode if not already in it
                                         isInSelectionMode = true
-                                        viewModel.toggleImageSelection(image) // Select the long-pressed item
+                                        
+                                        val currentItemId = image.id
+                                        generatedImages.forEach { otherImageInLoop: GeneratedImage -> // Explicitly typed lambda parameter
+                                            if (otherImageInLoop.id != currentItemId && otherImageInLoop.isSelectedForRotation) {
+                                                viewModel.toggleImageSelection(otherImageInLoop)
+                                            }
+                                        }
+                                        // Ensure the originally long-pressed image is selected
+                                        if (!image.isSelectedForRotation) {
+                                            viewModel.toggleImageSelection(image)
+                                        }
                                     }
                                 },
                                 onClick = {
@@ -278,7 +287,6 @@ fun FullscreenImageViewer(
     val pagerState = rememberPagerState(initialPage = startIndex) {
         images.size
     }
-    val context = LocalContext.current
 
     // State for swipe-to-dismiss gesture
     var offsetY by remember { mutableStateOf(0f) }
@@ -320,7 +328,7 @@ fun FullscreenImageViewer(
             ) { pageIndex ->
                 val image = images[pageIndex]
                 AsyncImage(
-                    model = ImageRequest.Builder(context)
+                    model = ImageRequest.Builder(LocalContext.current) // Changed
                         .data(File(image.filePath))
                         .crossfade(true)
                         .build(),
@@ -339,13 +347,11 @@ fun FullscreenImageViewer(
 @Composable
 fun ImageLibraryItem(
     image: GeneratedImage,
-    viewModel: QuoteViewModel,
     isInSelectionMode: Boolean,
     onToggleSelection: () -> Unit,
     onStartSelectionMode: () -> Unit,
     onClick: () -> Unit
 ) {
-    val context = LocalContext.current
     val isSelected = image.isSelectedForRotation
 
     Card(
