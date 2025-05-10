@@ -37,7 +37,8 @@ android {
         versionName = "1.0"
 
         // Make the API key available in BuildConfig
-        buildConfigField("String", "OPENAI_API_KEY", "\"${getApiKey("openai.api.key")}\"")
+        // buildConfigField("String", "OPENAI_API_KEY", "\"${getApiKey("openai.api.key")}\"") // Removed OpenAI key
+        buildConfigField("String", "GOOGLE_CLOUD_API_KEY", "\"${getApiKey("googlecloud.api.key")}\"") // Added Google Cloud key
     }
 
     buildFeatures {
@@ -111,9 +112,8 @@ dependencies {
     // Pager for fullscreen image viewer
     implementation("androidx.compose.foundation:foundation:1.6.7") // Ensure foundation is up-to-date
     implementation("androidx.compose.foundation:foundation-layout:1.6.7") // Ensure layout is up-to-date
-
-    // OpenAI Java SDK - Update version
-    implementation("com.openai:openai-java:1.6.0") // Updated version to 1.6.0
+    
+    // Add other necessary Google Cloud dependencies if required for authentication or other services
 
     // Ensure Material Components library is included
     implementation("com.google.android.material:material:1.12.0") // Or a newer stable version
