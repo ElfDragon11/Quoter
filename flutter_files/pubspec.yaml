@@ -1,0 +1,39 @@
+name: quoter
+description: A Flutter app that generates images using the OpenAI API.
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  path_provider: ^2.1.0
+  image_gallery_saver: ^2.0.3
+  permission_handler: ^11.0.1
+  flutter_dotenv: ^5.1.0
+  shared_preferences: ^2.2.2
+  cached_network_image: ^3.3.0
+  flutter_image_compress: ^2.1.0
+  flutter_launcher_icons: ^0.13.1
+  wallpaper: ^0.6.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - .env
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon.png"
+  min_sdk_android: 21
